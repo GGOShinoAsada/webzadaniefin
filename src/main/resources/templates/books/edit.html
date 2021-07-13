@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>edit book</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+           <form method="POST" id="app" @submit="checkForm" novalidate="true" th:object="${book}" action="#" th:action="@{/books/edit}">
+               <div class="form-group" v-if="errors.length">
+                   <p class="form-control">Пожалуйста исправьте указанные ошибки:</p>
+                   <ul>
+                       <li v-for="error in errors">{{ error }}</li>
+                   </ul>
+               </div>
+               <div class="form-group">
+                   <label for="my-input">Id книги</label>
+                   <input id="my-input" class="form-control" type="text" th:field="*{id}" readonly>
+               </div>
+               <div class="form-group">
+                   <label for="name">Название книги</label>
+                   <input id="name" class="form-control" type="text" th:field="*{name}">
+               </div>
+               <div class="form-group">
+                   <label for="isbn">isbn книги</label>
+                   <input id="isbn" class="form-control" type="text" th:field="*{isbn}">
+               </div>
+               <div class="form-group">
+                   <label for="dateofwriting">Дата написания книги</label>
+                   <input id="dateofwriting" class="form-control" type="text" th:field="*{dateofwriting}">
+               </div>
+               <div class="form-group">
+                   <label for="description">Описание книги</label>
+                   <input id="description" class="form-control" type="text" th:field="*{description}">
+               </div>
+               <div class="form-group">
+                   <label for="bookstoadd">Добавить автора</label>
+                   <ul>
+                       <li th:each="author : ${authtoadd}" name="bookstoadd" id="bookstoadd">
+                           <input type="checkbox" th:field="*{authorsToAdd}" th:text="${author.firstname}" th:value="${author.id}">
+                       </li>
+                   </ul>
+               </div>
+
+               <div class="form-group">
+                   <label for="bookstorem">Удалить автора</label>
+                   <ul>
+                       <li th:each="author : ${authtoremove}" name="bookstorem" id="bookstorem">
+                           <input type="checkbox" th:field="*{authorsToRemove}" th:text="${author.firstname}" th:value="${author.id}">
+                       </li>
+                   </ul>
+               </div>
+               <div class="form-group">
+                   <input type="submit" class="btn btn-succes" value="send"/>
+               </div>
+               <div class="form-group">
+                   <input type="reset" class="btn btn-danger" value="reset"/>
+               </div>
+           </form>
+
+       <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+       <script src="../../scripts/bookscript.js"></script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </body>
+</html>
