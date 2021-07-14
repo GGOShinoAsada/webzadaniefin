@@ -96,7 +96,7 @@ public class AuthorController {
     public String editPost(Author author){
         Author au = service.getAuthorById(author.getId());
         Set<Book> tmp = au.getBooks();
-        //Set<Book> books = au.getBooksToAdd();
+
         Set<Book> ba = Optional.ofNullable(author.getBooksToAdd()).orElse(null);
         Set<Book> br = Optional.ofNullable(author.getBooksToRemove()).orElse(null);
         if (ba!=null){

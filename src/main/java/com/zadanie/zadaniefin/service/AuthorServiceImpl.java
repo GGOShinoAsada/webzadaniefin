@@ -4,6 +4,9 @@ import com.zadanie.zadaniefin.dao.*;
 import com.zadanie.zadaniefin.model.*;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.apache.logging.log4j.spi.LoggerContextFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -17,7 +20,7 @@ import com.zadanie.zadaniefin.config.*;
 @Service
 public class AuthorServiceImpl implements AuthorService {
 
-
+    private Logger logger = LoggerFactory.getLogger(AuthorServiceImpl.class);
     private AuthorDao dao;
     @Autowired
     public void setDao(AuthorDao dao) {
@@ -43,7 +46,9 @@ public class AuthorServiceImpl implements AuthorService {
             int d = 0;
             dao.save(author);
         }
-           // dao.save(author);
+        else {
+            logger.error("author is null");
+        }
     }
 
     @Override
@@ -62,12 +67,17 @@ public class AuthorServiceImpl implements AuthorService {
                 dao.save(data);
             }
         }
+        else {
+            logger.error("please check input values");
+        }
     }
 
     @Override
     public void removingAuthor(int auid) {
         if (auid>=0)
             dao.deleteById(auid);
+        else
+            logger.error("please check input values");
     }
 
     /*@Override
