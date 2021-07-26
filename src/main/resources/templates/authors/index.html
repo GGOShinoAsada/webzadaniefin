@@ -20,6 +20,7 @@
               <th>date of born</th>
               <th>date of dead</th>
               <th>country</th>
+              <th>description</th>
               <th>books</th>
               <th colspan="3">actions</th>
           </thead>
@@ -28,9 +29,10 @@
               <td th:text="${author.firstname}"></th>
               <td th:text="${author.secondname}"></td>
               <td th:text="${author.middlename}"></td>
-              <td th:text="${author.dateofborn}"></td>
-              <td th:text="${author.dateofdead}"></td>
+              <td th:text="${author.dateofBorn}"></td>
+              <td th:text="${author.dateOfDead}"></td>
               <td th:text="${author.country}"></td>
+              <td th:text="${author.description}"></td>
               <td>
                 <ul th:each="book : ${author.books}">
                   <li th:text="${book.name}"></li><br/>

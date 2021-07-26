@@ -13,7 +13,5 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 @Repository
 public interface AuthorDao extends JpaRepository<Author, Integer> {
-    @Query("select max (id) from Author")
-    int getMaxId();
 
 }

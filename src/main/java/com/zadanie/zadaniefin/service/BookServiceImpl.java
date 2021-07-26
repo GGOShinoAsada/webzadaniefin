@@ -19,50 +19,84 @@ public class BookServiceImpl implements BookService {
      private Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
     private BookDao dao;
 
-    @Override
-    public Set<Book> getAllBooks() {
-        Set<Book> tmp = new HashSet(dao.findAll());
-        return tmp;
+    private AuthorDao authorDao;
+    @Autowired
+    public void setAuthorDao(AuthorDao dao){
+        this.authorDao = dao;
     }
 
     @Override
-    public Book getBookById(int id) {
-        return dao.findById(id).orElse(null);
+    public Set<BookDTO> getAllBooks() {
+        List<Book> tmp = dao.findAll();
+        Set<BookDTO> books = new HashSet();
+        for (Book  b : tmp){
+            BookDTO dto = new BookDTO(b.getId(), b.getName(), b.getIsbn(), b.getDateofwriting(), b.getDescription());
+            dto.setAuthors(b.getAuthors());
+            books.add(dto);
+        }
+        return books;
     }
 
     @Override
-    public void addingBook(Book b) {
+    public BookDTO getBookById(int id) {
+        BookDTO dto = new BookDTO();
+        Book b = dao.findById(id).orElse(null);
         if (b!=null){
-            dao.save(b);
+           dto = new BookDTO(b.getId(), b.getName(),b.getIsbn(), b.getDateofwriting(), b.getDescription());
+           dto.setAuthors(b.getAuthors());
         }
-        else {
-            logger.error("book is null");
+        return dto;
+    }
+
+    @Override
+    public void addingBook(BookDTO b) {
+        if (b!=null){
+            Book tmp = new Book(b.getName(), b.getIsbn(), b.getDateofwriting(), b.getDescription());
+            tmp.setAuthors(b.getAuthors());
+            dao.save(tmp);
         }
     }
 
     @Override
-    public void updatingBook(int bid, Book b) {
-        if (bid>=0 && b!=null){
-            Book book = dao.findById(bid).orElse(null);
-            if (book!=null){
-                book.setIsbn(b.getIsbn());
-                book.setName(b.getName());
-                book.setDescription(b.getDescription());
-                book.setDateofwriting(b.getDateofwriting());
-                book.setAuthors(b.getAuthors());
-                dao.save(book);
+    public void updatingBook(BookDTO b) {
+
+
+        if (b!=null){
+            Set<Author> authors = new HashSet();
+            Book tmp = dao.findById(b.getId()).orElse(null);
+            if (tmp!=null){
+                Set<AuthorDTO> a1 = b.getAuthorsToAdd();
+                Set<AuthorDTO> a2 = b.getAuthorToRemove();
+                Set<Author> au = tmp.getAuthors();
+                if (a1!=null){
+                    for (AuthorDTO auth : a1){
+                        Author author = new Author(auth.getId(), auth.getFirstname(), auth.getSecondname(), auth.getMiddlename(), auth.getDateofBorn(), auth.getDateOfDead(), auth.getCountry(), auth.getDescription());
+                        author.setBooks(auth.getBooks());
+                        au.add(author);
+                    }
+                }
+
+                if (a2!=null){
+                    for (AuthorDTO auth : a2){
+                        Author author = authorDao.findById(auth.getId()).orElse(null);
+                        if (author!=null){
+                            au.remove(author);
+                        }
+                    }
+                }
+
+                tmp.setName(b.getName());
+                tmp.setIsbn(b.getIsbn());
+                tmp.setDateofwriting(b.getDateofwriting());
+                tmp.setDescription(b.getDescription());
+                tmp.setAuthors(au);
+                dao.save(tmp);
             }
-        }
-        else {
-            logger.error("please check input values");
         }
     }
 
     @Override
     public void removingBook(int bid) {
-        if (bid>=0)
-            dao.deleteById(bid);
-        else
-            logger.error("please check input values");
+        dao.deleteById(bid);
     }
 }

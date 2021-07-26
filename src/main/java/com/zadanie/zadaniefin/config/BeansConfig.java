@@ -1,6 +1,8 @@
 package com.zadanie.zadaniefin.config;
 
 import com.zadanie.zadaniefin.dao.*;
+import com.zadanie.zadaniefin.model.AuthorDTO;
+import com.zadanie.zadaniefin.model.BookDTO;
 import com.zadanie.zadaniefin.service.AuthorService;
 import com.zadanie.zadaniefin.service.AuthorServiceImpl;
 import com.zadanie.zadaniefin.service.BookService;
@@ -18,12 +20,8 @@ public class BeansConfig {
     public BookService getBooks(){
         return new BookServiceImpl();
     }
-    /*@Bean
-    public BooksDao getBooksDao(){
-        return new BooksDaoImpl();
-    }
     @Bean
-    public AuthorsDao getAuthorsDao(){
-        return new AuthorsDaoImpl();
-    }*/
+    public BookDTO getBookDto(){return new BookDTO();}
+    @Bean
+    public AuthorDTO getAuthorDto() {return new AuthorDTO();}
 }

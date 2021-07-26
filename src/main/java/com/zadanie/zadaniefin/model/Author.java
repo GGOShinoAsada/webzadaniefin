@@ -3,6 +3,7 @@ import lombok.*;
 
 import java.util.*;
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 
 @Getter
 @Setter
@@ -14,38 +15,24 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "firstname", nullable = false)
+    @Column(name = "firstname", length = 50, nullable = false)
     private String firstname;
-    @Column(name = "secondname", nullable = false)
+    @Column(name = "secondname", length = 50, nullable = false)
     private String secondname;
-    @Column(nullable = false, name = "middlename")
+    @Column(nullable = false, length = 50, name = "middlename")
     private String middlename;
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", length = 100, nullable = false)
     private String description;
+    @Min(0)
     @Column(nullable = false, name = "dateofborn")
     private int dateofborn;
     @Column(name = "dateofdead", nullable = false)
+    @Min(0)
     private int dateofdead;
-    @Column(name = "COUNTRY", nullable = false)
+    @Column(name = "country", nullable = false)
     private String country;
-    @Transient
-    private Set<Book> booksToAdd;
-    @Transient
-    private Set<Book> booksToRemove;
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Author author = (Author) o;
-        return author!=null? author.getId()==id : false;
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    public Author(String firstname, String secondname, String middlename, String description, int dateofborn, int dateofdead, String country) {
+    public Author(String firstname, String secondname, String middlename, int dateofborn, int dateofdead, String country, String description) {
         this.firstname = firstname;
         this.secondname = secondname;
         this.middlename = middlename;
@@ -64,4 +51,15 @@ public class Author {
                     = @JoinColumn(name = "bid", referencedColumnName = "id")
     )
     private Set<Book> books= new HashSet();
+
+    public Author(int id, String firstname, String secondname, String middlename, int dateofBorn, int dateOfDead, String country, String description) {
+        this.id=id;
+        this.firstname=firstname;
+        this.secondname=secondname;
+        this.middlename=middlename;
+        this.dateofborn=dateofBorn;
+        this.dateofdead=dateOfDead;
+        this.country=country;
+        this.description=description;
+    }
 }

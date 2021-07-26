@@ -14,9 +14,10 @@
       Фамилия: <p th:text="${author.getFirstname()}">value</p><br/>
       Имя <p th:text="${author.getSecondname()}">value</p><br/>
       Отчество <p th:text="${author.getMiddlename()}">value</p><br/>
-      Дата рождения: <p th:text="${author.getDateofborn()}">value</p><br/>
-      Дата смерти: <p th:text="${author.getDateofdead()}">value</p>
+      Дата рождения: <p th:text="${author.getDateofBorn()}">value</p><br/>
+      Дата смерти: <p th:text="${author.getDateOfDead()}">value</p>
       страна: <p th:text="${author.getCountry()}">value</p><br/>
+      описание: <p th:text="${author.getDescription()}">value</p><br/>
       Список книг<br/>
       <ul th:each="book : ${author.getBooks()}">
         <li th:text="${book.getName()}">value</li><br/>

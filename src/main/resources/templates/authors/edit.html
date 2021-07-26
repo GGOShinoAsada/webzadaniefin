@@ -10,9 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
   <body>
-
-
-         <form id="app" @submit="checkForm" novalidate="true" method="POST" action="#" th:action="@{/authors/edit}" th:object="${author}">
+      <form id="app" @submit="checkForm" novalidate="true" method="POST" action="#" th:action="@{/authors/edit}" th:object="${author}">
             <div class="form-group" v-if="errors.length">
                 <p class="form-control">Пожалуйста исправьте указанные ошибки:</p>
                 <ul>
@@ -38,11 +36,11 @@
              </div>
              <div class="form-group">
                  <label for="dateofborn">дата рождения</label>
-                 <input id="dateofborn" class="form-control" type="text" th:field="*{dateofborn}">
+                 <input id="dateofborn" class="form-control" type="text" th:field="*{dateofBorn}">
              </div>
              <div class="form-group">
                  <label for="dateofdead">Дата смерти</label>
-                 <input id="dateofdead" class="form-control" type="text" th:field="*{dateofdead}">
+                 <input id="dateofdead" class="form-control" type="text" th:field="*{dateOfDead}">
              </div>
              <div class="form-group">
                  <label for="country">Страна</label>
@@ -56,7 +54,7 @@
                  <label for="bookstoadd">Добавить книгу</label>
                  <ul>
                      <li th:each="book : ${bookstoadd}" name="bookstoadd" id="bookstoadd">
-                         <input type="checkbox" th:field="*{booksToAdd}" th:text="${book.name}" th:value="${book.id}">
+                         <input type="checkbox" th:field="*{bookstoadd}" th:text="${book.name}" th:value="${book.id}">
                      </li>
                  </ul>
              </div>
@@ -65,7 +63,7 @@
                  <label for="bookstorem">Удалить книгу</label>
                  <ul>
                      <li th:each="book : ${bookstoremove}" name="bookstorem" id="bookstorem">
-                         <input type="checkbox" th:field="*{booksToRemove}" th:text="${book.name}" th:value="${book.id}">
+                         <input type="checkbox" th:field="*{bookstoremove}" th:text="${book.name}" th:value="${book.id}">
                      </li>
                  </ul>
              </div>

@@ -40,7 +40,7 @@ public class BookController {
     }
     @GetMapping("/details/{id}")
     public String details(@PathVariable("id") int id, Model model){
-        Book b = service.getBookById(id);
+        BookDTO b = service.getBookById(id);
         model.addAttribute("book", b );
         return "books/details";
     }
@@ -51,58 +51,47 @@ public class BookController {
         return "books/create";
     }
     @PostMapping("/create")
-    public String createPost(Book book){
-        int v =0;
+    public String createPost(BookDTO book){
         service.addingBook(book);
         return "redirect:/books/index";
     }
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") int id, Model model){
-        Book book = service.getBookById(id);
-        Set<Author> authors = new HashSet();
+        BookDTO book = service.getBookById(id);
+        Set<AuthorDTO> authors = new HashSet();
         authors = ser.getAllAuthors();
         Set<Author> tmp = book.getAuthors();
-        Set<Author> data = new HashSet();
-        for (Author a: authors){
-            if (!tmp.contains(a)){
+        Set<AuthorDTO> data = new HashSet();
+        for (AuthorDTO a: authors){
+            if (!isAuthorContains(tmp,a)){
                 data.add(a);
             }
         }
         book.setAuthorsToAdd(data);
         data = new HashSet();
-        for (Author a: authors){
-            if (tmp.contains(a)){
+        for (AuthorDTO a: authors){
+            if (isAuthorContains(tmp,a)){
                 data.add(a);
             }
         }
-        book.setAuthorsToRemove(data);
+        book.setAuthorToRemove(data);
         model.addAttribute("book", book);
-        Set<Author> atoadd = book.getAuthorsToAdd();
-        Set<Author> atorem = book.getAuthorsToRemove();
-        book.setAuthorsToRemove(new HashSet());
+        Set<AuthorDTO> atoadd = book.getAuthorsToAdd();
+        Set<AuthorDTO> atorem = book.getAuthorToRemove();
+        book.setAuthorToRemove(new HashSet());
         book.setAuthorsToAdd(new HashSet());
         model.addAttribute("authtoadd", atoadd);
         model.addAttribute("authtoremove",atorem);
         return "books/edit";
     }
     @PostMapping("/edit")
-    public String editpost(Book book){
-        Book b = service.getBookById(book.getId());
-        Set<Author> tmp = b.getAuthors();
-        Set<Author> authtoadd = Optional.ofNullable(book.getAuthorsToAdd()).orElse(null);
-        Set<Author> authtorem = Optional.ofNullable(book.getAuthorsToRemove()).orElse(null);
-        if (authtoadd!=null){
-            for (Author a: authtoadd){
-                tmp.add(a);
-            }
+    public String editpost(BookDTO book){
+        if (book!=null){
+            service.updatingBook(book);
         }
-        if (authtorem!=null){
-            for (Author a: authtorem){
-                tmp.remove(a);
-            }
+        else {
+            logger.error("please enter correct values");
         }
-        b.setAuthors(tmp);
-        service.updatingBook(b.getId(), b);
         return "redirect:/books/index";
     }
     @GetMapping("/delete/{id}")
@@ -110,5 +99,14 @@ public class BookController {
         service.removingBook(id);
         return "redirect:/books/index";
     }
-
+    private final boolean isAuthorContains(Set<Author> dto, AuthorDTO author){
+        boolean flag = false;
+        for (Author tmp : dto){
+            if (tmp.getId()==author.getId()){
+                flag = true;
+                break;
+            }
+        }
+        return flag;
+    }
 }

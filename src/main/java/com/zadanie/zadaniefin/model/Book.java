@@ -16,26 +16,21 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", length = 100, nullable = false)
     private String name;
-    @Column(name = "isbn", nullable = false)
+    @Column(name = "isbn", length = 20, nullable = false)
     private String isbn;
     @Column(name = "dateofwriting", nullable = false)
     private int dateofwriting;
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", length = 100, nullable = false)
     private String description;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Book book = (Book) o;
-        return id == book.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public Book(int id, String name, String isbn, int dateofwriting, String description) {
+        this.id = id;
+        this.name = name;
+        this.isbn = isbn;
+        this.dateofwriting = dateofwriting;
+        this.description = description;
     }
 
     public Book(String name, String isbn, int dateofwriting, String description) {
@@ -44,10 +39,7 @@ public class Book {
         this.dateofwriting = dateofwriting;
         this.description = description;
     }
-    @Transient
-    private Set<Author> authorsToAdd = new HashSet();
-    @Transient
-    private Set<Author> authorsToRemove = new HashSet();
+
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name = "books_authors",

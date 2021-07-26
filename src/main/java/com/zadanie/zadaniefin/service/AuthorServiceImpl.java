@@ -22,166 +22,87 @@ public class AuthorServiceImpl implements AuthorService {
 
     private Logger logger = LoggerFactory.getLogger(AuthorServiceImpl.class);
     private AuthorDao dao;
+
+    private BookDao d1;
+    @Autowired
+    public void setD1(BookDao bd){
+        this.d1 = bd;
+    }
     @Autowired
     public void setDao(AuthorDao dao) {
         this.dao = dao;
     }
-
     @Override
-    public Set<Author> getAllAuthors() {
-        Set<Author> tmp = new HashSet(dao.findAll());
-        return tmp;
+    public Set<AuthorDTO> getAllAuthors() {
+        List<Author> items = dao.findAll();
+        Set<AuthorDTO> dto = new HashSet();
+        for (Author au : items){
+            AuthorDTO tmp = new AuthorDTO(au.getId(), au.getFirstname(), au.getSecondname(), au.getMiddlename(), au.getDateofborn(), au.getDateofdead(), au.getCountry(), au.getDescription());
+            tmp.setBooks(au.getBooks());
+            dto.add(tmp);
+        }
+        return dto;
     }
 
     @Override
-    public Author getAuthorById(int id) {
-        Author a = new Author();
-        a = dao.findById(id).orElse(null);
-        return a;
+    public AuthorDTO getAuthorById(int id) {
+        Author a = dao.findById(id).orElse(null);
+        AuthorDTO dto = new AuthorDTO();
+        if (a!=null){
+            dto = new AuthorDTO(a.getId(), a.getFirstname(), a.getSecondname(), a.getMiddlename(), a.getDateofborn(), a.getDateofdead(), a.getCountry(), a.getDescription());
+            dto.setBooks(a.getBooks());
+        }
+        return dto;
     }
 
     @Override
-    public void addingAuthor(Author author) {
+    public void addingAuthor(AuthorDTO author) {
         if (author!=null){
-            int d = 0;
-            dao.save(author);
-        }
-        else {
-            logger.error("author is null");
-        }
-    }
-
-    @Override
-    public void updatingAuthor(int auid, Author author) {
-        if (auid>=0 && author!=null)
-        {
-            Author data = dao.findById(auid).orElse(null);
-            if (data!=null){
-                data.setBooks(author.getBooks());
-                data.setFirstname(author.getFirstname());
-                data.setSecondname(author.getSecondname());
-                data.setMiddlename(author.getMiddlename());
-                data.setDateofborn(author.getDateofborn());
-                data.setDateofdead(author.getDateofdead());
-                data.setDescription(author.getDescription());
-                dao.save(data);
-            }
-        }
-        else {
-            logger.error("please check input values");
-        }
-    }
-
-    @Override
-    public void removingAuthor(int auid) {
-        if (auid>=0)
-            dao.deleteById(auid);
-        else
-            logger.error("please check input values");
-    }
-
-    /*@Override
-    public Set<Author> getAllAuthors() {
-        return new HashSet(dao.findAll());
-    }
-
-    @Override
-    public Author getAuthorById(int id) {
-        Author data= dao.findById(id).orElse(null); //Optional.ofNullable(dao.geAuthorById(id)).orElse(null);
-        return data;
-    }
-
-    @Override
-    public void addingAuthor(Author author, Set<Book> b) {
-
-        if (author != null) {
-            //dao.save(author);
-            Author tmp = new Author(author.getFirstname(), author.getSecondname(), author.getMiddlename(), author.getDescription(), author.getDateofborn(), author.getDateofdead(), author.getCountry());
+            Author tmp = new Author(author.getFirstname(),author.getSecondname(), author.getMiddlename(), author.getDateofBorn(), author.getDateOfDead(), author.getCountry(), author.getDescription());
+            tmp.setBooks(author.getBooks());
             dao.save(tmp);
-            int id = dao.getMaxId();
-            tmp = dao.findById(id).orElse(null);
-            if (tmp!=null){
-                for (Book t : b){
-                    Merge m = new Merge(t, tmp);
-                    md.save(m);
+        }
+    }
+
+    @Override
+    public void updatingAuthor(AuthorDTO author) {
+
+        Author au = dao.findById(author.getId()).orElse(null);
+        if (au!=null){
+            Set<Book> tmp = au.getBooks();
+            Set<BookDTO> bta = author.getBookstoadd();
+            Set<BookDTO> btr = author.getBookstoremove();
+            if (bta!=null){
+                for (BookDTO b : bta){
+                    Book data = new Book(b.getId(), b.getName(), b.getIsbn(), b.getDateofwriting(), b.getDescription());
+                    data.setAuthors(b.getAuthors());
+                    tmp.add(data);
                 }
-
-            }
-        }
-    }
-
-    @Override
-    public void updatingAuthor(int auid, Author author) {
-        if (auid>0 && author!=null){
-            Author data = dao.findById(auid).orElse(null); //Optional.ofNullable(dao.geAuthorById(auid)).orElse(null);
-            if (data!=null){
-                data.setBooks(author.getBooks());
-                data.setFirstname(author.getFirstname());
-                data.setSecondname(author.getSecondname());
-                data.setMiddlename(author.getMiddlename());
-                data.setDateofborn(author.getDateofborn());
-                data.setDateofdead(author.getDateofdead());
-                data.setDescription(author.getDescription());
-                dao.save(data);
             }
 
+            if (btr!=null){
+                for (BookDTO b : btr){
+                    Book data = d1.findById(b.getId()).orElse(null);
+                    if (data!=null){
+                        tmp.remove(data);
+                    }
+                }
+            }
+
+            au.setFirstname(author.getFirstname());
+            au.setSecondname(author.getSecondname());
+            au.setMiddlename(author.getMiddlename());
+            au.setDateofborn(author.getDateofBorn());
+            au.setDateofdead(author.getDateOfDead());
+            au.setCountry(author.getCountry());
+            au.setDescription(author.getDescription());
+            au.setBooks(tmp);
+            dao.save(au);
         }
     }
 
     @Override
     public void removingAuthor(int auid) {
-        if (auid>=0){
-            dao.deleteById(auid);
-        }
+        dao.deleteById(auid);
     }
-
-    @Override
-    public Set<Book> getBooks(int auid) {
-        Set<Book> books = dao.getBooks(auid);
-        return books;
-    }*/
-
-
-    /*@Override
-    public Set<Author> getAllAuthors() {
-        Set<Author> authors = new HashSet();
-         authors = new HashSet(dao.findAll());
-        return authors;
-    }
-
-    @Override
-    public Author getAuthorById(int id) {
-        return dao.findById(id).orElse(null);
-    }
-
-    @Override
-    public void addingAuthor(Author author) {
-        if (author!=null){
-             dao.addingAuthor(author);
-        }
-    }
-
-    @Override
-    public void updatingAuthor(int auid, Author author) {
-        Author data =  Optional.ofNullable(dao.getAuthorById(auid)).orElse(null);
-        if (data!=null){
-            data.setBooks(author.getBooks());
-            data.setDateofborn(author.getDateofborn());
-            data.setDateofdead(author.getDateofdead());
-            data.setFirstname(author.getFirstname());
-            data.setSecondname(author.getSecondname());
-            data.setMiddlename(author.getMiddlename());
-            data.setDescription(author.getDescription());
-            data.setCountry(author.getCountry());
-            dao.updatingAuthor(data.getId(),data);
-        }
-    }
-
-    @Override
-    public void removingAuthor(int auid) {
-        Author author = Optional.ofNullable(dao.getAuthorById(auid)).orElse(null);
-        if (author!=null){
-            dao.removingAuthor(author.getId());
-        }
-    }*/
 }
